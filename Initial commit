@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 协作纪元 | Gemini 3 Pro 个人作品集</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;500;700&display=swap');
+
+        :root {
+            /* Palette: Brilliant Blues & Vibrant Indigo */
+            --cyber-blue: #00F2FF;
+            --vibrant-indigo: #6366F1;
+            --energy-purple: #A855F7;
+            --deep-dark: #020617;
+            --card-bg: rgba(15, 23, 42, 0.7);
+        }
+
+        body {
+            background-color: var(--deep-dark);
+            color: #E2E8F0;
+            font-family: 'Noto Sans SC', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 242, 255, 0.1);
+            border-radius: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: var(--cyber-blue);
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.15);
+            transform: translateY(-6px);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        .nav-link {
+            position: relative;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover { color: var(--cyber-blue); }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--cyber-blue);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after { width: 100%; }
+
+        /* Pure CSS Icons & Decor (NO SVG) */
+        .neon-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-blue), transparent);
+            width: 100%;
+        }
+
+        .glow-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--cyber-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--cyber-blue);
+        }
+
+        .ai-border-pulse {
+            border: 1px solid var(--vibrant-indigo);
+            animation: pulse-indigo 2s infinite;
+        }
+
+        @keyframes pulse-indigo {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--cyber-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500/30">
+
+    <!-- 
+    SPA INFOGRAPHIC ANALYSIS & PLAN:
+    - Subject: Personal Portfolio for Gemini 3 Pro collaborations.
+    - Style: High-tech, Vibrant, Professional.
+    - AI Features: 
+        1. Inspiration Lab (Creative Prompt Generation).
+        2. Co-lab Auditor (Project assessment).
+        3. Live Audio Guide (TTS).
+    - Constraints: No SVG. No Mermaid. Chart labels wrapped at 16 chars. Tooltip title logic implemented.
+    -->
+
+    <!-- Sticky Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-slate-950/90 backdrop-blur-xl border-b border-cyan-500/10 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="font-orbitron text-2xl font-black text-cyan-400 tracking-tighter flex items-center">
+                <span class="mr-2">◈</span> GEMINI<span class="text-white">SYNAPSE</span>
+            </div>
+            <div class="hidden md:flex space-x-10 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                <a href="#hero" class="nav-link">Home</a>
+                <a href="#stats" class="nav-link">Analysis</a>
+                <a href="#ai-lab" class="nav-link">✨ AI Lab</a>
+                <a href="#portfolio" class="nav-link">Works</a>
+            </div>
+            <button onclick="playGuide('welcome')" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-5 py-2 rounded-full font-bold text-[10px] uppercase transition-all">
+                🔊 站点导览
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="min-h-screen flex flex-col justify-center items-center px-6 pt-24 relative">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-indigo-600/5 rounded-full blur-[120px]"></div>
+        </div>
+        
+        <div class="max-w-5xl text-center relative z-10">
+            <div class="mb-6 flex justify-center items-center space-x-3">
+                <div class="glow-dot"></div>
+                <span class="text-xs font-black uppercase tracking-[0.5em] text-cyan-400">Human-AI Partnership v3.0</span>
+            </div>
+            <h1 class="text-6xl md:text-9xl font-black font-orbitron mb-8 leading-none tracking-tighter">
+                超越交互 <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600">
+                    深度共生
+                </span>
+            </h1>
+            <p class="text-lg md:text-2xl text-slate-400 font-light mb-12 max-w-3xl mx-auto leading-relaxed">
+                这不是简单的提示词交互。这是利用 Gemini 3 Pro 的推理引擎，将复杂的架构设计与人类的审美直觉进行融合的数字结晶。
+            </p>
+            <div class="flex flex-wrap gap-6 justify-center">
+                <a href="#ai-lab" class="px-10 py-5 bg-white text-slate-950 rounded-xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-transform">
+                    ✨ 创意实验室
+                </a>
+                <a href="#stats" class="px-10 py-5 border border-cyan-500/30 text-cyan-400 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-cyan-500/5 transition-all">
+                    数据分析
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Inspiration Lab (Gemini Integration) -->
+    <section id="ai-lab" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            <!-- Inspiration Generator -->
+            <div class="glass-card p-10 ai-border-pulse">
+                <h3 class="text-2xl font-black font-orbitron text-white mb-6">✨ AI 创意实验室</h3>
+                <p class="text-slate-400 text-sm mb-8 leading-relaxed">
+                    感觉灵感枯竭？点击下方按钮，由 Gemini 3 Pro 深度模型为你生成一个具有挑战性的“人机协作”项目提案。
+                </p>
+                <div id="inspiration-display" class="min-h-[180px] border border-white/5 bg-black/40 rounded-xl p-6 text-sm text-cyan-100 font-light leading-relaxed mb-6">
+                    等待核心链路唤醒...
+                </div>
+                <button id="gen-idea-btn" onclick="generateIdea()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 rounded-xl uppercase text-xs tracking-widest shadow-lg shadow-indigo-500/20 transition-all active:scale-95">
+                    ✨ 获取下一个灵感
+                </button>
+            </div>
+
+            <!-- Co-lab Auditor -->
+            <div class="glass-card p-10">
+                <h3 class="text-2xl font-black font-orbitron text-white mb-6">✨ 协作深度审计</h3>
+                <p class="text-slate-400 text-sm mb-8 leading-relaxed">
+                    输入你的项目构想，AI 将评估该方案与 Gemini 协作的契合度，并提供优化方向。
+                </p>
+                <div class="flex flex-col space-y-4">
+                    <textarea id="audit-input" class="w-full bg-slate-950/50 border border-white/10 rounded-xl p-4 text-sm text-white focus:border-cyan-500 outline-none transition-all h-32" placeholder="描述你的项目构思..."></textarea>
+                    <button id="audit-btn" onclick="auditProject()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-black py-4 rounded-xl uppercase text-xs tracking-widest transition-all">
+                        ✨ 开启深度审计
+                    </button>
+                </div>
+                <div id="audit-result" class="mt-6 text-xs text-slate-500 hidden">
+                    <!-- Results injected here -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Global AI Status Overlay -->
+        <div id="ai-loading-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] hidden flex flex-col items-center justify-center">
+            <div class="loading-spinner"></div>
+            <p class="mt-6 font-orbitron text-cyan-400 text-xs tracking-[0.4em] uppercase animate-pulse">Synchronizing Synapse...</p>
+        </div>
+    </section>
+
+    <!-- Data Analytics Section -->
+    <section id="stats" class="py-24 px-6 bg-slate-950/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl font-black font-orbitron mb-4">协作效率矩阵 / ANALYTICS</h2>
+                <div class="neon-line mb-6"></div>
+                <p class="text-slate-400 max-w-2xl mx-auto">
+                    我们不仅仅是在聊天，我们是在重塑生产力。以下是 Gemini 对我开发周期的实际贡献数据。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <!-- Radar Chart -->
+                <div class="glass-card p-10">
+                    <div class="flex justify-between items-center mb-8">
+                        <h4 class="text-lg font-bold">能力支持领域分布</h4>
+                        <span class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest border border-cyan-500/20 px-2 py-1 rounded">Radar Map</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="capabilityRadar"></canvas>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-6 text-center italic">
+                        该图表展示了 Gemini 在不同工程领域的支持深度（满分 100）。
+                    </p>
+                </div>
+
+                <!-- Bar Chart -->
+                <div class="glass-card p-10">
+                    <div class="flex justify-between items-center mb-8">
+                        <h4 class="text-lg font-bold">开发速度提升率对比</h4>
+                        <span class="text-[10px] text-purple-400 font-bold uppercase tracking-widest border border-purple-500/20 px-2 py-1 rounded">Growth Stats</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="speedBarChart"></canvas>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-6 text-center italic">
+                        对比传统流程与 AI 驱动流程在不同复杂度模块中的交付周期。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Gallery -->
+    <section id="portfolio" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="flex items-center space-x-6 mb-16">
+            <h2 class="text-3xl font-black font-orbitron">成果作品集</h2>
+            <div class="flex-grow h-[1px] bg-white/10"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Project 1 -->
+            <div class="glass-card p-8 group">
+                <div class="text-3xl mb-6 opacity-60 group-hover:opacity-100 transition-opacity">💿</div>
+                <h4 class="text-xl font-bold mb-3 text-white">语义化数据库架构</h4>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                    与 Gemini 共同设计的非线性关联模型，专门用于处理海量社交媒体数据的实时分析。
+                </p>
+                <div class="flex items-center text-[10px] font-bold text-cyan-500 space-x-4">
+                    <span>#DATABASE</span>
+                    <span>#LLM-READY</span>
+                    <button onclick="playGuide('project1')" class="ml-auto text-white/40 hover:text-white transition-colors">▶ 语音介绍</button>
+                </div>
+            </div>
+            <!-- Project 2 -->
+            <div class="glass-card p-8 group">
+                <div class="text-3xl mb-6 opacity-60 group-hover:opacity-100 transition-opacity">🎨</div>
+                <h4 class="text-xl font-bold mb-3 text-white">自适应 UI 引擎</h4>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                    基于 Gemini 视觉理解能力开发的响应式框架，能够根据用户意图自动调整交互逻辑。
+                </p>
+                <div class="flex items-center text-[10px] font-bold text-purple-500 space-x-4">
+                    <span>#UX_DESIGN</span>
+                    <span>#ADAPTIVE</span>
+                    <button onclick="playGuide('project2')" class="ml-auto text-white/40 hover:text-white transition-colors">▶ 语音介绍</button>
+                </div>
+            </div>
+            <!-- Project 3 -->
+            <div class="glass-card p-8 group">
+                <div class="text-3xl mb-6 opacity-60 group-hover:opacity-100 transition-opacity">🔐</div>
+                <h4 class="text-xl font-bold mb-3 text-white">实时代码审计卫士</h4>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6">
+                    集成在 IDE 中的自动化审计工具，在开发阶段即可拦截 90% 以上的常见安全漏洞。
+                </p>
+                <div class="flex items-center text-[10px] font-bold text-slate-400 space-x-4">
+                    <span>#SECURITY</span>
+                    <span>#AUDIT</span>
+                    <button onclick="playGuide('project3')" class="ml-auto text-white/40 hover:text-white transition-colors">▶ 语音介绍</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 border-t border-white/5 bg-slate-950 px-6 text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="font-orbitron text-[10px] text-slate-600 uppercase tracking-[0.8em] mb-8">
+                Documentation of Infinite Synergy // CE 2025
+            </div>
+            <div class="flex justify-center space-x-12 text-slate-700 text-[10px] uppercase font-bold tracking-widest">
+                <span>Made with Brain</span>
+                <span class="text-cyan-900">◈</span>
+                <span>Enhanced by Gemini 3 Pro</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Audio Player (Hidden) -->
+    <audio id="global-audio-player" class="hidden"></audio>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const apiKey = ""; // Staged for runtime
+        const textModel = "gemini-2.5-flash-preview-09-2025";
+        const ttsModel = "gemini-2.5-flash-preview-tts";
+
+        // --- EXPONENTIAL BACKOFF FETCH ---
+        async function fetchWithRetry(url, options, retries = 5, delay = 1000) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                return await response.json();
+            } catch (err) {
+                if (retries > 0) {
+                    await new Promise(r => setTimeout(r, delay));
+                    return fetchWithRetry(url, options, retries - 1, delay * 2);
+                }
+                throw err;
+            }
+        }
+
+        // --- GEMINI API HELPERS ---
+        async function callGeminiText(prompt, systemInstruction = "") {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${textModel}:generateContent?key=${apiKey}`;
+            const body = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] }
+            };
+            const result = await fetchWithRetry(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            return result.candidates?.[0]?.content?.parts?.[0]?.text;
+        }
+
+        async function callGeminiTTS(text, voice = "Kore") {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${ttsModel}:generateContent?key=${apiKey}`;
+            const body = {
+                contents: [{ parts: [{ text: `Say naturally: ${text}` }] }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } }
+                    }
+                }
+            };
+            const result = await fetchWithRetry(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            return result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        }
+
+        // --- UI ACTIONS ---
+        async function generateIdea() {
+            const display = document.getElementById('inspiration-display');
+            const overlay = document.getElementById('ai-loading-overlay');
+            overlay.classList.remove('hidden');
+
+            try {
+                const prompt = "为我生成一个独特的、高难度的 AI 与人类协作项目点子。涵盖技术栈和预期影响力。保持语气专业、具有未来感，且控制在 150 字以内。";
+                const response = await callGeminiText(prompt, "你是一个充满创意的顶级科技实验室负责人。");
+                display.innerText = response;
+                playGuide("✨ 新创意已就绪。");
+            } catch (err) {
+                display.innerText = "创意链路中断，请检查 API 密钥状态。";
+            } finally {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        async function auditProject() {
+            const input = document.getElementById('audit-input').value.trim();
+            if (!input) return;
+
+            const resultBox = document.getElementById('audit-result');
+            const btn = document.getElementById('audit-btn');
+            const overlay = document.getElementById('ai-loading-overlay');
+
+            btn.disabled = true;
+            overlay.classList.remove('hidden');
+
+            try {
+                const prompt = `审计以下项目构想并给出 0-100 的协作契合度评分：\n\n"${input}"\n\n请指出协作的难点并给出优化建议。使用简洁的中文。`;
+                const response = await callGeminiText(prompt, "你是一个严谨的高级系统架构师。");
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `
+                    <div class="p-4 bg-slate-900/80 rounded-xl border border-white/10 mt-4">
+                        <strong class="text-cyan-400 block mb-2">✨ 审计分析报告:</strong>
+                        <p class="text-slate-300 leading-relaxed">${response.replace(/\n/g, '<br>')}</p>
+                    </div>
+                `;
+            } catch (err) {
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `<p class="text-red-400 mt-4">审计服务暂不可用。</p>`;
+            } finally {
+                overlay.classList.add('hidden');
+                btn.disabled = false;
+            }
+        }
+
+        // --- AUDIO ENGINE ---
+        async function playGuide(key) {
+            let text = "";
+            switch(key) {
+                case 'welcome': text = "欢迎来到协作纪元个人空间。我是你的导览助手。请浏览数据分析或开启创意实验室，见证人机共生的成果。"; break;
+                case 'project1': text = "这是语义化数据库架构项目。Gemini 的推理引擎极大地优化了数据查询的路径权重。"; break;
+                case 'project2': text = "这是自适应 UI 引擎。它利用视觉分析能力，让界面能够真正读懂用户的交互潜台词。"; break;
+                case 'project3': text = "实时代码审计卫士，是我们在安全工程领域的突破，实现了零延迟的逻辑漏洞拦截。"; break;
+                default: text = key;
+            }
+
+            try {
+                const base64Audio = await callGeminiTTS(text, "Fenrir");
+                if (base64Audio) {
+                    const audioBlob = pcmToWav(base64Audio, 24000);
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const player = document.getElementById('global-audio-player');
+                    player.src = audioUrl;
+                    player.play();
+                }
+            } catch (e) { console.error("TTS Error", e); }
+        }
+
+        // PCM to WAV converter for Gemini Audio
+        function pcmToWav(base64, sampleRate) {
+            const byteChars = atob(base64);
+            const byteNums = new Array(byteChars.length);
+            for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
+            const buffer = new Uint8Array(byteNums).buffer;
+            const view = new DataView(buffer);
+            const wavBuffer = new ArrayBuffer(44 + buffer.byteLength);
+            const wavView = new DataView(wavBuffer);
+            const writeStr = (off, s) => { for(let i=0; i<s.length; i++) wavView.setUint8(off+i, s.charCodeAt(i)); };
+            writeStr(0, 'RIFF');
+            wavView.setUint32(4, 36 + buffer.byteLength, true);
+            writeStr(8, 'WAVE');
+            writeStr(12, 'fmt ');
+            wavView.setUint32(16, 16, true);
+            wavView.setUint16(20, 1, true); // PCM
+            wavView.setUint16(22, 1, true); // Mono
+            wavView.setUint32(24, sampleRate, true);
+            wavView.setUint32(28, sampleRate * 2, true);
+            wavView.setUint16(32, 2, true);
+            wavView.setUint16(34, 16, true);
+            writeStr(36, 'data');
+            wavView.setUint32(40, buffer.byteLength, true);
+            for(let i=0; i<buffer.byteLength; i++) wavView.setUint8(44 + i, view.getUint8(i));
+            return new Blob([wavBuffer], { type: 'audio/wav' });
+        }
+
+        // --- CHARTS INITIALIZATION ---
+        window.onload = function() {
+            // Label Wrapping logic (Requirement: split labels > 16 chars)
+            function wrapLabels(labels) {
+                return labels.map(label => {
+                    if (label.length > 16) {
+                        const words = label.split(''); // Use character split for mixed languages
+                        const result = [];
+                        let currentLine = "";
+                        words.forEach(char => {
+                            if (currentLine.length > 14) {
+                                result.push(currentLine);
+                                currentLine = char;
+                            } else {
+                                currentLine += char;
+                            }
+                        });
+                        result.push(currentLine);
+                        return result;
+                    }
+                    return label;
+                });
+            }
+
+            // Shared Tooltip Config (Requirement: callbacks.title)
+            const commonTooltip = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                return Array.isArray(label) ? label.join('') : label;
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Capability Radar Chart
+            const ctxRadar = document.getElementById('capabilityRadar').getContext('2d');
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: wrapLabels(['逻辑开发能力支持', 'UI交互设计构思', '大规模文档数据分析', '创意内容脚本撰写', '架构设计与安全审计']),
+                    datasets: [{
+                        label: 'Gemini 协作评分',
+                        data: [95, 75, 90, 85, 80],
+                        backgroundColor: 'rgba(0, 242, 255, 0.2)',
+                        borderColor: '#00F2FF',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#FFF'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    ...commonTooltip,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255,255,255,0.05)' },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            pointLabels: { color: '#94A3B8', font: { size: 10 } },
+                            ticks: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Speed Bar Chart
+            const ctxBar = document.getElementById('speedBarChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: wrapLabels(['原型阶段耗时', '模块逻辑联调', '全量压力测试', '部署上线流程']),
+                    datasets: [{
+                        label: '传统开发模式',
+                        data: [100, 85, 90, 40],
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                    }, {
+                        label: 'AI 驱动协作模式',
+                        data: [25, 40, 30, 10],
+                        backgroundColor: '#6366F1'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    ...commonTooltip,
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#94A3B8' } },
+                        y: { 
+                            grid: { color: 'rgba(255,255,255,0.05)' }, 
+                            ticks: { color: '#94A3B8', callback: (v) => v + '%' } 
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
