@@ -1,0 +1,12 @@
+def efficiency_calculator():
+    income = float(input("请输入你的年收入 (USD): "))
+    hours = 2000 # 标准年度工时
+    
+    hourly_rate = income / hours
+    outsource_limit = hourly_rate * 0.5
+    
+    print(f"\n--- 结果 ---")
+    print(f"你的当前时薪: ${hourly_rate:.2f}")
+    print(f"外包标准线: 低于 ${outsource_limit:.2f} 的任务请立即外包！")
+
+efficiency_calculator()
